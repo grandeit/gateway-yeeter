@@ -1,4 +1,4 @@
-name: Gateway Yeeter - Build & Push
+name: Build & Push
 
 on:
   push:
