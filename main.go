@@ -141,7 +141,7 @@ func handleMutate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if admissionReview.Request.Kind.Group != "" || admissionReview.Request.Kind.Kind != "Pod" {
-		klog.Warningf("Unsupported GVK %s, review skipped", admissionReview.Request.Kind.String())
+		klog.Warningf("Unsupported GVK %s - This should not happen, skipping.", admissionReview.Request.Kind.String())
 		admissionReview.Response = &admissionv1.AdmissionResponse{
 			Allowed: true,
 		}
