@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gateway-yeeter
+  namespace: openshift-mtv
+  labels:
+    app: gateway-yeeter
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: gateway-yeeter

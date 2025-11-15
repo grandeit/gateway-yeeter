@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-yeeter
+  namespace: openshift-mtv
+  labels:
+    app: gateway-yeeter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gateway-yeeter
+  template:
+    metadata:
+      labels:
+        app: gateway-yeeter
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: gateway-yeeter
+              topologyKey: kubernetes.io/hostname
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: gateway-yeeter
+          image: ghcr.io/grandeit/gateway-yeeter:latest
+          imagePullPolicy: Always
+          env:
+            - name: GOMEMLIMIT
+              value: "50MiB"
+          ports:
+            - containerPort: 8443
+              name: gateway-yeeter
+              protocol: TCP
+          volumeMounts:
+            - name: gateway-yeeter-certs
+              mountPath: /etc/server/certs
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: gateway-yeeter-certs
+          secret:
+            secretName: gateway-yeeter-certs
