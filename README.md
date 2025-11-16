@@ -2,6 +2,16 @@
 
 A Kubernetes MutatingAdmissionWebhook that removes problematic default gateway configurations from MTV (Migration Toolkit for Virtualization) migration pods to enable vCenter connectivity while preserving transfer network access.
 
+## Update: Native Support Available
+
+[Forklift commit dd73d5a](https://github.com/kubev2v/forklift/commit/dd73d5a212328e3ff433908a465e1cc41029939a) adds native support for `forklift.konveyor.io/route: "none"` to achieve the same result as this webhook:
+
+```yaml
+metadata:
+  annotations:
+    forklift.konveyor.io/route: "none"
+```
+
 ## Problem
 
 MTV's transfer network feature allows separating VM migration traffic from normal cluster traffic or leveraging high-speed layer 2 networks for disk transfers. In some deployments, the transfer network is a non-routable layer 2 network with direct ESXi host connectivity but no gateway, while vCenter remains accessible only via the cluster's default routing/egress.
